@@ -5,6 +5,8 @@
 
 Translates text and returns resulting sentences from Google Translate.
 
+import translate
+
 print translate.translate('hello', sl='english', tl='portuguese')
 print translate.translate('hello', sl='auto', tl='portuguese')
 print translate.translate('hallo', sl='auto', tl='portuguese')
