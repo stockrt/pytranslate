@@ -96,7 +96,7 @@ lc = {'afrikaans':'af',
 
 def translate(text, sl='english', tl='portuguese'):
     '''
-    Translates text and returns resulting sentences from Google Translate
+    Translates text and returns resulting sentences from Google Translate.
 
     print translate.translate('hello', sl='english', tl='portuguese')
     print translate.translate('hello', sl='auto', tl='portuguese')

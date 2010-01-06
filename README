@@ -1,0 +1,12 @@
+#
+# Author: Rogério Carvalho Schneider <stockrt@gmail.com>
+# URL:    http://stockrt.github.com
+#
+
+Translates text and returns resulting sentences from Google Translate.
+
+print translate.translate('hello', sl='english', tl='portuguese')
+print translate.translate('hello', sl='auto', tl='portuguese')
+print translate.translate('hallo', sl='auto', tl='portuguese')
+print translate.translate('hallo', sl='auto', tl='french')
+print translate.translate('Bonjour', sl='auto', tl='dutch')
