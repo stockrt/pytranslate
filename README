@@ -5,6 +5,15 @@
 
 Translates text and returns resulting sentences from Google Translate.
 
+
+- Install
+wget http://github.com/stockrt/pytranslate/tarball/master -O pytranslate.tar.gz
+tar xzvf pytranslate.tar.gz
+cd stockrt-pytranslate*
+./setup.py install
+
+
+- Usage
 import translate
 
 print translate.translate('hello', sl='english', tl='portuguese')
