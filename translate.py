@@ -94,7 +94,7 @@ lc = {'afrikaans':'af',
       'auto':'auto',
 }
 
-def translate(text, sl='english', tl='portuguese'):
+def translate(text, sl='auto', tl='portuguese'):
     '''
     Translates text and returns resulting sentences from Google Translate.
 
