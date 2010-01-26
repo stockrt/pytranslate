@@ -6,8 +6,8 @@ __program_file__     = 'translate.py'
 __program_name__     = '%s' % __program_file__.split('.py')[0]
 __scripts__          = []
 __data_files__       = []
-__version__          = '0.1.0'
-__date__             = '2010/01/05'
+__version__          = '0.1.1'
+__date__             = '2010/01/26'
 __author_email__     = 'stockrt@gmail.com'
 __author__           = 'Rogério Carvalho Schneider <%s>' % __author_email__
 __maintainer_email__ = __author_email__
@@ -108,4 +108,7 @@ def translate(text, sl='auto', tl='portuguese'):
     f = urllib.FancyURLopener()
     post_params = urllib.urlencode({'client':'t', 'text':text, 'sl':'%s' % (lc[sl.lower()]), 'tl':'%s' % (lc[tl.lower()]), 'pc':'0'})
     content = f.open('http://translate.google.com/translate_a/t', post_params).read()
-    return simplejson.loads(content)['sentences'][0]['trans']
+    try:
+        return simplejson.loads(content)['sentences'][0]['trans']
+    except:
+        return text
