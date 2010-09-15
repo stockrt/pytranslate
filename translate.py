@@ -6,8 +6,8 @@ __program_file__     = 'translate.py'
 __program_name__     = '%s' % __program_file__.split('.py')[0]
 __scripts__          = []
 __data_files__       = []
-__version__          = '0.1.1'
-__date__             = '2010/01/26'
+__version__          = '0.1.2'
+__date__             = '2010/09/14'
 __author_email__     = 'stockrt@gmail.com'
 __author__           = 'Rogério Carvalho Schneider <%s>' % __author_email__
 __maintainer_email__ = __author_email__
@@ -38,7 +38,6 @@ __rpm_data__        = '''
 ### GENERIC_SETUP_MARKER_END ###
 
 import urllib
-import simplejson
 
 lc = {'afrikaans':'af',
       'albanian':'sq',
@@ -104,11 +103,12 @@ def translate(text, sl='auto', tl='portuguese'):
     print translate.translate('hallo', sl='auto', tl='french')
     print translate.translate('Bonjour', sl='auto', tl='dutch')
     '''
+
     urllib.FancyURLopener.version = 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008070400 SUSE/3.0.1-0.1 Firefox/3.0.1'
     f = urllib.FancyURLopener()
-    post_params = urllib.urlencode({'client':'t', 'text':text, 'sl':'%s' % (lc[sl.lower()]), 'tl':'%s' % (lc[tl.lower()]), 'pc':'0'})
+    post_params = urllib.urlencode({'client':'t', 'text':text, 'sl':'%s' % (lc[sl.lower()]), 'tl':'%s' % (lc[tl.lower()])})
     content = f.open('http://translate.google.com/translate_a/t', post_params).read()
     try:
-        return simplejson.loads(content)['sentences'][0]['trans']
+        return content[4:].split('"')[0]
     except:
         return text
