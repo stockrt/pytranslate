@@ -21,3 +21,4 @@ print translate.translate('hello', sl='auto', tl='portuguese')
 print translate.translate('hallo', sl='auto', tl='portuguese')
 print translate.translate('hallo', sl='auto', tl='french')
 print translate.translate('Bonjour', sl='auto', tl='dutch')
+
