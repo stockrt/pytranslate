@@ -18,9 +18,8 @@ sys.setdefaultencoding('utf-8')
  *                http://stockrt.github.com
  * =========================================================================
 '''
-import os
-__program_file__        = os.path.basename(__file__)
-__program_name__        = '%s' % __program_file__.split('.py')[0]
+__program_file__        = 'setup.py'
+__program_name__        = 'generic_%s' % __program_file__.split('.py')[0]
 __version__             = '0.1.4'
 __date__                = '2011/03/14'
 __author_name__         = 'Rogério Carvalho Schneider'
@@ -80,7 +79,7 @@ You need to install some extra modules in order to run this program:
 
 ### DEFINES_START ###
 # Set this parameter to point to your source file, leave the rest as is:
-source_code = 'change_me.py'
+source_code = 'pytranslate.py'
 
 # Basic specfile defines
 brpmdata = '''
@@ -133,8 +132,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 ### GENERIC_SETUP_MARKER_START ###
-import os
-__program_file__        = os.path.basename(__file__)
+__program_file__        = 'your_program.py'
 __program_name__        = '%s' % __program_file__.split('.py')[0]
 # if you have scripts
 __scripts__             = []
@@ -321,7 +319,7 @@ def main():
     source_code_data = open(source_code).read()
 
     # Does this file contain special coding?
-    coding = re.search('(.*-\*- coding: .*)', source_code_data)
+    coding = re.search('(.*coding: .*)', source_code_data)
     setup_data = ''
     if coding:
         setup_data += coding.group(1)
@@ -414,11 +412,11 @@ entries are missing: [%s]' % (source_code, why)
     m.close()
 
     # Modules
-    for m in spy_modules:
-        if not os.path.exists(m):
-            os.mkdir(m)
-        if not os.path.exists(m + '/__init__.py'):
-            open(m + '/__init__.py', 'a').write('')
+#    for m in spy_modules:
+#        if not os.path.exists(m):
+#            os.mkdir(m)
+#        if not os.path.exists(m + '/__init__.py'):
+#            open(m + '/__init__.py', 'a').write('')
 
     # All set here. Just use the values now.
 
@@ -464,7 +462,7 @@ entries are missing: [%s]' % (source_code, why)
     # Clean all, really
     if len(sys.argv) == 2:
         if sys.argv[1] == 'clean':
-            os.system('rm -rf MANIFEST dist *.pyc *.pyo')
+            os.system('rm -rf MANIFEST build dist *.pyc *.pyo')
             sys.exit(0)
 
 if __name__ == '__main__':
