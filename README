@@ -14,10 +14,10 @@ cd stockrt-pytranslate*
 
 
 - Usage
-import translate
+import pytranslate
 
-print translate.translate('hello', sl='english', tl='portuguese')
-print translate.translate('hello', sl='auto', tl='portuguese')
-print translate.translate('hallo', sl='auto', tl='portuguese')
-print translate.translate('hallo', sl='auto', tl='french')
-print translate.translate('Bonjour', sl='auto', tl='dutch')
+print pytranslate.translate('hello', sl='english', tl='portuguese')
+print pytranslate.translate('hello', sl='auto', tl='portuguese')
+print pytranslate.translate('hallo', sl='auto', tl='portuguese')
+print pytranslate.translate('hallo', sl='auto', tl='french')
+print pytranslate.translate('Bonjour', sl='auto', tl='dutch')
