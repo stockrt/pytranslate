@@ -476,9 +476,11 @@ if __name__ == '__main__':
 
 '''
 # References:
- http://www.python.org/doc/2.5.2/dist/dist.html
- http://www.python.org/doc/2.5.2/dist/module-distutils.core.html
+http://docs.python.org/distutils/
+http://docs.python.org/install/
+http://docs.python.org/distutils/setupscript.html
+http://docs.python.org/distutils/apiref.html#module-distutils.core
 
 # Trove classifiers:
- http://pypi.python.org/pypi?:action=list_classifiers
+http://pypi.python.org/pypi?:action=list_classifiers
 '''
