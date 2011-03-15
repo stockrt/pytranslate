@@ -41,7 +41,6 @@ Google Translate wrapper for Python.
 __rpm_data__            = '''
 %files
 %defattr(-,root,root,-)
-@@PYLIB_MARKER@@/%{name}-%{unmangled_version}-py@@PYVER_MARKER@@.egg-info
 '''
 ### GENERIC_SETUP_MARKER_END ###
 

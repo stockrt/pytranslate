@@ -178,7 +178,6 @@ __rpm_data__            = \'''
 %dir /var/spool/%{name}
 %config(noreplace) /usr/local/%{name}/conf/%{name}.conf
 /usr/local/%{name}/bin/%{name}.py
-@@PYLIB_MARKER@@/%{name}-%{unmangled_version}-py@@PYVER_MARKER@@.egg-info
 
 %post
 echo
@@ -197,9 +196,6 @@ and
  '### GENERIC_SETUP_MARKER_END ###'
 MUST exist.
 - Just copy/paste the sample into your source code and it should work fine.
-- Keep the whole line with the '@@PYLIB_MARKER@@ and @@PYVER_MARKER@@' in
-'__rpm_data__' since it is the register for your app into python. The marker
-will be replaced with the correct python version.
 
 
 2) Edit this setup.py script and change the 'source_code' define to point to
@@ -269,6 +265,10 @@ the configuration files we may have in our project, so take a look at the
 
 def rpmbuild(sname, sversion, srpmdata):
     try:
+        # Dirs
+        os.system('mkdir -p ~/rpmbuild/BUILD')
+        os.system('mkdir -p ~/rpmbuild/RPMS')
+        os.system('mkdir -p ~/rpmbuild/SOURCES')
         # Default .spec
         os.system('./setup.py bdist_rpm --spec-only')
         # Default tarball
@@ -276,7 +276,7 @@ def rpmbuild(sname, sversion, srpmdata):
         # Python Lib dir and Version
         pylib = get_python_lib()
         pyver = get_python_version()
-        # Applying the changes to the .spec (%files/%config/%dir/%post):
+        # Applying the changes to the .spec (%dir/%files/%config/%post):
         # Initialize spec with the basic
         newspec = brpmdata
         for l in open('dist/%s.spec' % sname).readlines():
@@ -285,11 +285,13 @@ def rpmbuild(sname, sversion, srpmdata):
             # '%defattr(-,root,root,-)'
             if '%files -f INSTALLED_FILES' not in l and '%defattr' not in l:
                 newspec += l
-        # Insert the user defined specs (%files/%config/%dir/%post):
+        # Insert the user defined specs (%dir/%files/%config/%post):
         newspec += srpmdata
-        # Replace the Python Lib dir and Version by the real ones
-        newspec = newspec.replace('@@PYLIB_MARKER@@', pylib)
-        newspec = newspec.replace('@@PYVER_MARKER@@', pyver)
+        # INSTALLED_FILES
+        os.system('rm -rf ~/rpmbuild/BUILD/tmp')
+        os.system('./setup.py install --root=~/rpmbuild/BUILD/tmp --record=build/INSTALLED_FILES')
+        newspec += open('build/INSTALLED_FILES').read()
+        # new specfile
         open('dist/%s.spec' % sname, 'w').write(newspec)
         # Create the new RPM
         os.system('rpmbuild -bb dist/%s.spec' % sname)
@@ -339,20 +341,8 @@ required markers are missing (probably \
 \"### GENERIC_SETUP_MARKER_START ###\" or \
 \"### GENERIC_SETUP_MARKER_END ###\").' % source_code
         generic_setup()
-        sys.exit(2)
+        sys.exit(1)
     setup_data += source_code_data.split('### GENERIC_SETUP_MARKER_START ###')[1].split('### GENERIC_SETUP_MARKER_END ###')[0]
-
-    # Search for the Python Lib dir and Version markers:
-        # @@PYLIB_MARKER@@
-        # @@PYVER_MARKER@@
-    if '@@PYLIB_MARKER@@' not in setup_data or \
-    '@@PYVER_MARKER@@' not in setup_data:
-        print
-        print 'ERR: Check your program "%s" __rpm_data__ markers. Some of the \
-required markers are missing (probably \"@@PYLIB_MARKER@@\" or \
-\"@@PYVER_MARKER@@\").' % source_code
-        generic_setup()
-        sys.exit(3)
 
     # Save this content, so we can import to use it later:
     open('setup_data_file.py', 'w').write(setup_data)
@@ -363,7 +353,7 @@ required markers are missing (probably \"@@PYLIB_MARKER@@\" or \
         print 'ERR: Check your program "%s" defines. Some of the required \
 entries are missing: [%s]' % (source_code, why)
         generic_setup()
-        sys.exit(4)
+        sys.exit(1)
     try:
         os.remove('setup_data_file.py')
         os.remove('setup_data_file.pyc')
@@ -395,18 +385,18 @@ entries are missing: [%s]' % (source_code, why)
         print 'ERR: Check your program "%s" defines. Some of the required \
 entries are missing: [%s]' % (source_code, why)
         generic_setup()
-        sys.exit(5)
+        sys.exit(1)
 
     # Remove e-mail from the author's and maintainer's name (for the .spec generation)
     sauthor = sauthor.split(' <')[0]
     smaintainer = smaintainer.split(' <')[0]
 
     # Create the MANIFEST file with data_files included
-    s = ['setup.py']
-    for f in setup_data_file.__data_files__:
+    s = ['setup.py', setup_data_file.__program_file__]
+    for f in sdata_files:
         for f1 in f[1]:
             s.append(f1)
-    for f in setup_data_file.__scripts__:
+    for f in sscripts:
         s.append(f)
     # sort -u
     s = sortuniq(s)
@@ -483,4 +473,7 @@ http://docs.python.org/distutils/apiref.html#module-distutils.core
 
 # Trove classifiers:
 http://pypi.python.org/pypi?:action=list_classifiers
+
+# Maximum RPM:
+http://www.rpm.org/max-rpm/
 '''
