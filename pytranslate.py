@@ -34,11 +34,11 @@ __classifiers__         = [
         'Programming Language :: Python',
         'Topic :: Utilities',
 ]
-__description__      = 'Google Translate wrapper for Python.'
-__long_description__ = '''%s
+__description__         = 'Google Translate wrapper for Python.'
+__long_description__    = '''%s
 Google Translate wrapper for Python.
 ''' % __program_file__
-__rpm_data__        = '''
+__rpm_data__            = '''
 %files
 %defattr(-,root,root,-)
 @@PYLIB_MARKER@@/%{name}-%{unmangled_version}-py@@PYVER_MARKER@@.egg-info

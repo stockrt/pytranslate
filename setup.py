@@ -228,9 +228,12 @@ Now you can:
  ./setup.py bdist_dumb       create a "dumb" built distribution
  ./setup.py bdist_rpm        create an RPM distribution
  ./setup.py bdist_wininst    create an executable installer for MS Windows
+
 The special rpmbuild:
  ./setup.py rpmbuild         automated rpmbuild with custom .spec
-And also all the commands and options available from --help and --help-commands'''
+
+And also all the commands and options available from --help and --help-commands
+'''
 
 def generic_setup_rpmbuild():
     print '''
@@ -261,7 +264,8 @@ only an example.
 
 ** This approach has a problem: It do not take care of %config(noreplace) for
 the configuration files we may have in our project, so take a look at the
-"rpmbuild tip" above using a custom, automagically generated, RPM .spec file.'''
+"rpmbuild tip" above using a custom, automagically generated, RPM .spec file.
+'''
 
 def rpmbuild(sname, sversion, srpmdata):
     try:
