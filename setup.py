@@ -462,7 +462,9 @@ entries are missing: [%s]' % (source_code, why)
     # Clean all, really
     if len(sys.argv) == 2:
         if sys.argv[1] == 'clean':
-            os.system('rm -rf MANIFEST build dist *.pyc *.pyo')
+            os.system('rm -rf MANIFEST build dist temp *.pyc *.pyo')
+            for m in spy_modules:
+                os.system('rm -rf %s.egg-info' % m)
             sys.exit(0)
 
 if __name__ == '__main__':
