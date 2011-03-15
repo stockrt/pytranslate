@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 '''
  * =========================================================================
  * setup.py
@@ -15,28 +18,34 @@
  *                http://stockrt.github.com
  * =========================================================================
 '''
-__program_file__     = 'setup.py'
-__program_name__     = 'generic_setup'
-__version__          = '0.1.3'
-__date__             = '2010/01/05'
-__author_email__     = 'stockrt@gmail.com'
-__author__           = 'Rogério Carvalho Schneider <%s>' % __author_email__
-__maintainer_email__ = __author_email__
-__maintainer__       = __author__
-__copyright__        = 'Copyright (C) 2010 Rogério Carvalho Schneider'
-__license__          = 'GPLv3'
-__url__              = 'http://stockrt.github.com'
-__download_url__     = __url__
-__py_modules__       = []
-__platforms__        = ['any']
-__keywords__         = 'generic setup.py'
-__classifiers__      = ['Development Status :: 1 - Planning',
-'Environment :: Web Environment',
-'Intended Audience :: End Users/Desktop',
-'License :: OSI Approved :: GNU General Public License (GPL)',
-'Operating System :: OS Independent',
-'Programming Language :: Python',
-'Topic :: Utilities']
+import os
+__program_file__        = os.path.basename(__file__)
+__program_name__        = '%s' % __program_file__.split('.py')[0]
+__version__             = '0.1.4'
+__date__                = '2011/03/14'
+__author_name__         = 'Rogério Carvalho Schneider'
+__author_email__        = 'stockrt@gmail.com'
+__author__              = '%s <%s>' % (__author_name__, __author_email__)
+__maintainer_name__     = __author_name__
+__maintainer_email__    = __author_email__
+__maintainer__          = '%s <%s>' % (__maintainer_name__, __maintainer_email__)
+__copyright__           = 'Copyright (C) 2011 %s' % __author_name__
+__license__             = 'GPLv3'
+__url__                 = 'http://stockrt.github.com'
+__download_url__        = __url__
+__py_modules__          = []
+__platforms__           = ['any']
+__keywords__            = 'generic setup.py'
+__classifiers__         = [
+        'Development Status :: 1 - Planning',
+        'Environment :: Web Environment',
+        'Intended Audience :: Information Technology',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Natural Language :: English',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python',
+        'Topic :: Utilities',
+]
 __description__      = 'Generic setup.py (generic_setup)'
 __long_description__ = '''%s
 Generic setup.py (generic_setup). This setup.py reads values from the source
@@ -46,9 +55,32 @@ It also automagically generate an RPM .spec file with data gathered from
 inside your main program source file.
 ''' % __program_file__
 
+### IMPORTS_START ###
+try:
+    import sys
+    import re
+    import os
+    import itertools
+    from distutils.sysconfig import get_python_lib
+    from distutils.sysconfig import get_python_version
+except ImportError, why:
+    print
+    print 'Error loading module: [%s]' % why
+    print '''
+You need to install some extra modules in order to run this program:
+- easy_install
+    wget http://peak.telecommunity.com/dist/ez_setup.py
+    python ez_setup.py
+    easy_install ...
+- pip:
+    pip install ...
+'''
+    sys.exit(1)
+### IMPORTS_END ###
+
 ### DEFINES_START ###
 # Set this parameter to point to your source file, leave the rest as is:
-source_code = 'translate.py'
+source_code = 'change_me.py'
 
 # Basic specfile defines
 brpmdata = '''
@@ -61,16 +93,6 @@ brpmdata = '''
 %define debug_package %{nil}
 '''
 ### DEFINES_END ###
-
-### IMPORTS_START ###
-import sys
-import re
-import os
-import itertools
-# Distribution functions
-from distutils.sysconfig import get_python_lib
-from distutils.sysconfig import get_python_version
-### IMPORTS_END ###
 
 def sortuniq(lista):
     if isinstance(lista, list) or isinstance(lista, tuple):
@@ -105,47 +127,54 @@ line, you should put your descriptions and then this:
 
 -- copy this sample --
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 ### GENERIC_SETUP_MARKER_START ###
-__program_file__     = 'feedget.py'
-__program_name__     = '%s' % __program_file__.split('.py')[0]
+import os
+__program_file__        = os.path.basename(__file__)
+__program_name__        = '%s' % __program_file__.split('.py')[0]
 # if you have scripts
-__scripts__          = []
+__scripts__             = []
 # if only a module
-#__data_files__       = []
+#__data_files__          = []
 # if a program (have config files, extras)
-__data_files__       = [('/usr/local/%s/conf' % __program_name__, ['%s.conf' % __program_name__]), ('/usr/local/%s/bin' % __program_name__, [__program_file__]), ('/var/spool/%s' % __program_name__, [])]
-__version__          = '0.1.8'
-__date__             = '2008/12/05'
-__author_email__     = 'stockrt@gmail.com'
-__author__           = 'Rogério Carvalho Schneider <%s>' % __author_email__
-__maintainer_email__ = __author_email__
-__maintainer__       = __author__
-__copyright__        = 'Copyright (C) 2008 Rogério Carvalho Schneider'
-__license__          = 'GPLv3'
-__url__              = 'http://stockrt.github.com'
-__download_url__     = __url__
+__data_files__          = [('/usr/local/%s/conf' % __program_name__, ['%s.conf' % __program_name__]), ('/usr/local/%s/bin' % __program_name__, [__program_file__]), ('/var/spool/%s' % __program_name__, [])]
+__version__             = '0.1.8'
+__date__                = '2011/03/14'
+__author_name__         = 'Rogério Carvalho Schneider'
+__author_email__        = 'stockrt@gmail.com'
+__author__              = '%s <%s>' % (__author_name__, __author_email__)
+__maintainer_name__     = __author_name__
+__maintainer_email__    = __author_email__
+__maintainer__          = '%s <%s>' % (__maintainer_name__, __maintainer_email__)
+__copyright__           = 'Copyright (C) 2011 %s' % __author_name__
+__license__             = 'GPLv3'
+__url__                 = 'http://stockrt.github.com'
+__download_url__        = __url__
 # if installing a module
-#__py_modules__       = [__program_name__]
+#__py_modules__          = [__program_name__]
 # if you don't have modules
-__py_modules__       = []
-__platforms__        = ['any']
-__keywords__         = 'feed reader torrent download tvrss eztv vtv'
-__classifiers__      = ['Development Status :: 1 - Planning',
-'Environment :: Web Environment',
-'Intended Audience :: End Users/Desktop',
-'License :: OSI Approved :: GNU General Public License (GPL)',
-'Operating System :: OS Independent',
-'Programming Language :: Python',
-'Topic :: Utilities']
-__description__      = 'Feed reader for downloading the newest TV Shows \
-torrents from feed sites based on user\\\'s filters.'
-__long_description__ = \'''%s
-Feed reader for downloading the newest TV Shows torrents
-from feed sites based on user's filters.
+__py_modules__          = []
+__platforms__           = ['any']
+__keywords__            = 'python utilities functions'
+__classifiers__         = [
+        'Development Status :: 1 - Planning',
+        'Environment :: Web Environment',
+        'Intended Audience :: Information Technology',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Natural Language :: English',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python',
+        'Topic :: Utilities',
+]
+__description__         = 'Python utilities.'
+__long_description__    = \'''%s
+Python utilities.
 \''' % __program_file__
-__rpm_data__        = \'''
+__rpm_data__            = \'''
 %files
 %defattr(-,root,root,-)
 %dir /var/spool/%{name}
@@ -155,17 +184,7 @@ __rpm_data__        = \'''
 
 %post
 echo
-echo 'Be sure to take a look at the configuration file "/usr/local/%{name}/conf/%{name}.conf".
-Also be certain to check the file permissions if you intend to run this
-software under any UID/GID other than root/root (recommended)
-
-After configuring your own directories, files, options and user/group, run
-as root:
- /usr/local/%{name}/bin/%{name}.py --fix-permissions
-
-Then, when everything is configured, just call %{name}.py and watch the
-magic:
- /usr/local/%{name}/bin/%{name}.py'
+echo 'Some message to your users'
 echo
 \'''
 ### GENERIC_SETUP_MARKER_END ###
@@ -192,7 +211,7 @@ your program.
 ### DEFINES_START ###
 # Set this parameter to point to your source file, leave the rest as is:
 #source_code = 'change_me.py'
-source_code = 'feedget.py'
+source_code = 'your_program.py'
 ### DEFINES_END ###
 
 
