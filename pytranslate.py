@@ -133,7 +133,7 @@ def translate(text, sl='auto', tl='portuguese'):
 
     urllib.FancyURLopener.version = 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008070400 SUSE/3.0.1-0.1 Firefox/3.0.1'
     f = urllib.FancyURLopener()
-    post_params = urllib.urlencode({'client':'t', 'text':text, 'sl':'%s' % (lc[sl.lower()]), 'tl':'%s' % (lc[tl.lower()])})
+    post_params = urllib.urlencode({'client':'t', 'text':text, 'sl':'%s' % (LANG_CODES[sl.lower()]), 'tl':'%s' % (LANG_CODES[tl.lower()])})
     content = f.open('http://translate.google.com/translate_a/t', post_params).read()
     try:
         return content[4:].split('"')[0]
