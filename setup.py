@@ -20,6 +20,8 @@ sys.setdefaultencoding('utf-8')
 '''
 __program_file__        = 'setup.py'
 __program_name__        = 'generic_%s' % __program_file__.split('.py')[0]
+__scripts__             = []
+__data_files__          = []
 __version__             = '0.1.4'
 __date__                = '2011/03/14'
 __author_name__         = 'Rogério Carvalho Schneider'
@@ -45,8 +47,8 @@ __classifiers__         = [
         'Programming Language :: Python',
         'Topic :: Utilities',
 ]
-__description__      = 'Generic setup.py (generic_setup)'
-__long_description__ = '''%s
+__description__         = 'Generic setup.py (generic_setup)'
+__long_description__    = '''%s
 Generic setup.py (generic_setup). This setup.py reads values from the source
 code of your module/application and auto-assemble the setup() function
 arguments for distutils.
@@ -85,13 +87,22 @@ source_code = 'pytranslate.py'
 brpmdata = '''
 # Recommended Topdir
 %define _topdir %(echo $HOME)/rpmbuild
+
 # So the build does not fail due to unpackaged files or missing doc files:
 %define _unpackaged_files_terminate_build 0
 %define _missing_doc_files_terminate_build 0
+
 # No debug package:
 %define debug_package %{nil}
 '''
+
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 ### DEFINES_END ###
+
+def local(command):
+    ret = os.system(command)
+    if ret:
+        raise Exception('ERR: Error running local command: %s' % command)
 
 def sortuniq(lista):
     if isinstance(lista, list) or isinstance(lista, tuple):
@@ -101,11 +112,11 @@ def sortuniq(lista):
 
 def generic_setup():
     print 'For more help on %s, type:' % __program_name__
-    print ' ./setup.py %s using' % __program_name__
-    print ' ./setup.py %s rpmbuild' % __program_name__
+    print '    ./setup.py %s using' % __program_name__
+    print '    ./setup.py %s rpmbuild' % __program_name__
     print
     print 'For automated rpmbuild, with custom .spec, type:'
-    print ' ./setup.py rpmbuild'
+    print '    ./setup.py rpmbuild'
     print
 
 def generic_setup_using():
@@ -137,7 +148,7 @@ __program_name__        = '%s' % __program_file__.split('.py')[0]
 # if you have scripts
 __scripts__             = []
 # if only a module
-#__data_files__          = []
+__data_files__          = []
 # if a program (have config files, extras)
 __data_files__          = [('/usr/local/%s/conf' % __program_name__, ['%s.conf' % __program_name__]), ('/usr/local/%s/bin' % __program_name__, [__program_file__]), ('/var/spool/%s' % __program_name__, [])]
 __version__             = '0.1.8'
@@ -153,7 +164,7 @@ __license__             = 'GPLv3'
 __url__                 = 'http://stockrt.github.com'
 __download_url__        = __url__
 # if installing a module
-#__py_modules__          = [__program_name__]
+__py_modules__          = [__program_name__]
 # if you don't have modules
 __py_modules__          = []
 __platforms__           = ['any']
@@ -173,16 +184,16 @@ __long_description__    = \'''%s
 Python utilities.
 \''' % __program_file__
 __rpm_data__            = \'''
+%post
+echo
+echo 'Some message to your users'
+echo
+
 %files
 %defattr(-,root,root,-)
 %dir /var/spool/%{name}
 %config(noreplace) /usr/local/%{name}/conf/%{name}.conf
 /usr/local/%{name}/bin/%{name}.py
-
-%post
-echo
-echo 'Some message to your users'
-echo
 \'''
 ### GENERIC_SETUP_MARKER_END ###
 -- copy this sample --
@@ -191,10 +202,9 @@ echo
 - Then here you start the 'import' calls, whatsoever.
 - Note that the tags MUST be placed as in the sample, since they are markers
 for the generic_setup:
- '### GENERIC_SETUP_MARKER_START ###'
+    '### GENERIC_SETUP_MARKER_START ###'
 and
- '### GENERIC_SETUP_MARKER_END ###'
-MUST exist.
+    '### GENERIC_SETUP_MARKER_END ###'
 - Just copy/paste the sample into your source code and it should work fine.
 
 
@@ -209,26 +219,28 @@ source_code = 'your_program.py'
 ### DEFINES_END ###
 
 
-3) Remove all the %post script if you think you don't need it. Much probable
-if you are not installing a program (i.e. just installing a module).
+3) Customize any other specfile tag you want to use, but keep %files as the
+last one.
 
 
 Done :)
 
 
 Now you can:
- ./setup.py install          install your app
- ./setup.py sdist            create a source distribution (tarball, zip file, etc.)
- ./setup.py register         register the distribution with the Python package index
- ./setup.py bdist            create a built (binary) distribution
- ./setup.py bdist_dumb       create a "dumb" built distribution
- ./setup.py bdist_rpm        create an RPM distribution
- ./setup.py bdist_wininst    create an executable installer for MS Windows
+    ./setup.py install          install your app
+    ./setup.py sdist            create a source distribution (tarball, zip file, etc.)
+    ./setup.py bdist            create a built (binary) distribution
+    ./setup.py bdist_dumb       create a "dumb" built distribution
+    ./setup.py bdist_rpm        create an RPM distribution
+    ./setup.py bdist_wininst    create an executable installer for MS Windows
+    ./setup.py register         register the distribution with the Python Package Index
+    ./setup.py sdist upload     upload the source distribution to the Python Package Index
+    ./setup.py bdist upload     upload the built (binary) distribution to the Python Package Index
 
-The special rpmbuild:
- ./setup.py rpmbuild         automated rpmbuild with custom .spec
+And the special rpmbuild:
+    ./setup.py rpmbuild         automated rpmbuild with custom .spec
 
-And also all the commands and options available from --help and --help-commands
+Also you can still use all the commands and options available from --help and --help-commands
 '''
 
 def generic_setup_rpmbuild():
@@ -244,9 +256,10 @@ def generic_setup_rpmbuild():
 - Create an RPM based on the .spec automagically generated from the data
 gathered in the main source file of your application:
 
- yum -y install rpmdev-setuptree
- rpmdev-setuptree
- ./setup.py rpmbuild
+    yum -y install rpmdev-setuptree
+    rpmdev-setuptree
+
+    ./setup.py rpmbuild
 
 ** When you are creating your own project, you may want to change some data
 in the source file, as it's name, descriptions and RPM data, since this is
@@ -256,7 +269,7 @@ only an example.
 # Creating the RPM (bdist_rpm tip)
 - The default distutils approach for automatic RPM generation:
 
- ./setup.py bdist_rpm
+    ./setup.py bdist_rpm
 
 ** This approach has a problem: It do not take care of %config(noreplace) for
 the configuration files we may have in our project, so take a look at the
@@ -266,17 +279,17 @@ the configuration files we may have in our project, so take a look at the
 def rpmbuild(sname, sversion, srpmdata):
     try:
         # Dirs
-        os.system('mkdir -p ~/rpmbuild/BUILD')
-        os.system('mkdir -p ~/rpmbuild/RPMS')
-        os.system('mkdir -p ~/rpmbuild/SOURCES')
+        local('mkdir -p ~/rpmbuild/BUILD')
+        local('mkdir -p ~/rpmbuild/RPMS')
+        local('mkdir -p ~/rpmbuild/SOURCES')
         # Default .spec
-        os.system('./setup.py bdist_rpm --spec-only')
+        local('./setup.py bdist_rpm --spec-only')
         # Default tarball
-        os.system('./setup.py sdist --dist-dir ~/rpmbuild/SOURCES/')
+        local('./setup.py sdist --dist-dir ~/rpmbuild/SOURCES/')
         # Python Lib dir and Version
         pylib = get_python_lib()
         pyver = get_python_version()
-        # Applying the changes to the .spec (%dir/%files/%config/%post):
+        # Applying the changes to the .spec (%post/%files/%defattr/%dir/%config):
         # Initialize spec with the basic
         newspec = brpmdata
         for l in open('dist/%s.spec' % sname).readlines():
@@ -285,20 +298,34 @@ def rpmbuild(sname, sversion, srpmdata):
             # '%defattr(-,root,root,-)'
             if '%files -f INSTALLED_FILES' not in l and '%defattr' not in l:
                 newspec += l
-        # Insert the user defined specs (%dir/%files/%config/%post):
+        # Insert the user defined specs (%post/%files/%defattr/%dir/%config):
         newspec += srpmdata
-        # INSTALLED_FILES
-        os.system('rm -rf ~/rpmbuild/BUILD/tmp')
-        os.system('./setup.py install --root=~/rpmbuild/BUILD/tmp --record=build/INSTALLED_FILES')
-        newspec += open('build/INSTALLED_FILES').read()
-        # new specfile
+
+        # New INSTALLED_FILES
+        build_tmp = '~/rpmbuild/BUILD/tmp'
+        build_installed_files = os.path.join(PROJECT_DIR, 'build/INSTALLED_FILES')
+        local('rm -rf %s' % build_tmp)
+        local('./setup.py install --root=%s --record=%s' % (build_tmp, build_installed_files))
+        local('python -O -m compileall %s' % build_tmp)
+        local('cd %s && find . -type f | sed \'s,^\.,,g\' >> %s' % (build_tmp, build_installed_files))
+        new_installed_files = []
+        for l in open(build_installed_files).readlines():
+            new_installed_files.append(l)
+        new_installed_files = sortuniq(new_installed_files)
+        new_installed_files_output = ''.join(new_installed_files)
+        open(build_installed_files, 'w').write(new_installed_files_output)
+        newspec += new_installed_files_output
+        newspec += '\n'
+
+        # New specfile
         open('dist/%s.spec' % sname, 'w').write(newspec)
         # Create the new RPM
-        os.system('rpmbuild -bb dist/%s.spec' % sname)
+        local('rpmbuild -bb dist/%s.spec' % sname)
         # Copy the created RPM to dist/
-        os.system('/bin/cp ~/rpmbuild/RPMS/noarch/%s-%s-*.rpm dist/' % (sname, sversion))
+        local('/bin/cp ~/rpmbuild/RPMS/noarch/%s-%s-*.rpm dist/' % (sname, sversion))
     except Exception, why:
         print 'ERR: Error building the RPM with custom .spec file: [%s]' % why
+        print
 
 ##########
 ## MAIN ##
@@ -320,6 +347,7 @@ def main():
     if not os.path.exists(source_code):
         print
         print 'ERR: Check your setup.py script defines. File not found: [%s]' % source_code
+        print
         generic_setup()
         sys.exit(1)
     source_code_data = open(source_code).read()
@@ -331,13 +359,13 @@ def main():
         setup_data += coding.group(1)
 
     # Search for the delimiters and filter content between:
-        ### GENERIC_SETUP_MARKER_START ###
-        ### GENERIC_SETUP_MARKER_END ###
+    ### GENERIC_SETUP_MARKER_START ###
+    ### GENERIC_SETUP_MARKER_END ###
     if '### GENERIC_SETUP_MARKER_START ###' not in source_code_data or \
     '### GENERIC_SETUP_MARKER_END ###' not in source_code_data:
         print
         print 'ERR: Check your program "%s" define markers. Some of the \
-required markers are missing (probably \
+required markers are missing (\
 \"### GENERIC_SETUP_MARKER_START ###\" or \
 \"### GENERIC_SETUP_MARKER_END ###\").' % source_code
         generic_setup()
@@ -351,7 +379,7 @@ required markers are missing (probably \
     except Exception, why:
         print
         print 'ERR: Check your program "%s" defines. Some of the required \
-entries are missing: [%s]' % (source_code, why)
+entries are probably missing: [%s]' % (source_code, why)
         generic_setup()
         sys.exit(1)
     try:
@@ -383,7 +411,7 @@ entries are missing: [%s]' % (source_code, why)
     except Exception, why:
         print
         print 'ERR: Check your program "%s" defines. Some of the required \
-entries are missing: [%s]' % (source_code, why)
+entries are probably missing: [%s]' % (source_code, why)
         generic_setup()
         sys.exit(1)
 
@@ -418,7 +446,7 @@ entries are missing: [%s]' % (source_code, why)
     if len(sys.argv) == 1:
         generic_setup()
 
-    # rpmbuild for a custom, automagically generated, RPM .spec file
+    # rpmbuild for a custom, automagically generated RPM .spec file
     if len(sys.argv) == 2:
         if sys.argv[1] == 'rpmbuild':
             rpmbuild(sname, sversion, srpmdata)
@@ -456,9 +484,9 @@ entries are missing: [%s]' % (source_code, why)
     # Clean all, really
     if len(sys.argv) == 2:
         if sys.argv[1] == 'clean':
-            os.system('rm -rf MANIFEST build dist temp *.pyc *.pyo')
+            local('rm -rf MANIFEST build dist temp *.pyc *.pyo')
             for m in spy_modules:
-                os.system('rm -rf %s.egg-info' % m)
+                local('rm -rf %s.egg-info' % m)
             sys.exit(0)
 
 if __name__ == '__main__':
