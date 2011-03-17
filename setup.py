@@ -58,12 +58,11 @@ inside your main program source file.
 
 ### IMPORTS_START ###
 try:
-    import sys
+    import ez_setup
+    ez_setup.use_setuptools()
     import re
     import os
     import itertools
-    from distutils.sysconfig import get_python_lib
-    from distutils.sysconfig import get_python_version
 except ImportError, why:
     print
     print 'Error loading module: [%s]' % why
@@ -117,6 +116,9 @@ def generic_setup():
     print
     print 'For automated rpmbuild, with custom .spec, type:'
     print '    ./setup.py rpmbuild'
+    print
+    print 'Cleaning up:'
+    print '    ./setup.py clean'
     print
 
 def generic_setup_using():
@@ -229,13 +231,12 @@ Done :)
 Now you can:
     ./setup.py install          install your app
     ./setup.py sdist            create a source distribution (tarball, zip file, etc.)
-    ./setup.py bdist            create a built (binary) distribution
-    ./setup.py bdist_dumb       create a "dumb" built distribution
     ./setup.py bdist_rpm        create an RPM distribution
-    ./setup.py bdist_wininst    create an executable installer for MS Windows
+    ./setup.py bdist_egg        create an "egg" distribution
     ./setup.py register         register the distribution with the Python Package Index
     ./setup.py sdist upload     upload the source distribution to the Python Package Index
-    ./setup.py bdist upload     upload the built (binary) distribution to the Python Package Index
+    ./setup.py bdist_rpm upload upload the RPM distribution to the Python Package Index
+    ./setup.py bdist_egg upload upload the "egg" distribution to the Python Package Index
 
 And the special rpmbuild:
     ./setup.py rpmbuild         automated rpmbuild with custom .spec
@@ -286,9 +287,6 @@ def rpmbuild(sname, sversion, srpmdata):
         local('./setup.py bdist_rpm --spec-only')
         # Default tarball
         local('./setup.py sdist --dist-dir ~/rpmbuild/SOURCES/')
-        # Python Lib dir and Version
-        pylib = get_python_lib()
-        pyver = get_python_version()
         # Applying the changes to the .spec (%post/%files/%defattr/%dir/%config):
         # Initialize spec with the basic
         newspec = brpmdata
@@ -341,7 +339,8 @@ def main():
             sys.exit(0)
 
     # Distribution function
-    from distutils.core import setup
+    #from distutils.core import setup
+    from setuptools import setup, find_packages
 
     # Read source file content
     if not os.path.exists(source_code):
@@ -390,24 +389,24 @@ entries are probably missing: [%s]' % (source_code, why)
 
     # Test if the program file contains all the variables needed to run setup.py
     try:
-        sname             = setup_data_file.__program_name__
-        sscripts          = setup_data_file.__scripts__
-        sdata_files       = setup_data_file.__data_files__
-        sversion          = setup_data_file.__version__
-        sauthor_email     = setup_data_file.__author_email__
-        sauthor           = setup_data_file.__author__
-        smaintainer_email = setup_data_file.__maintainer_email__
-        smaintainer       = setup_data_file.__maintainer__
-        slicense          = setup_data_file.__license__
-        surl              = setup_data_file.__url__
-        sdownload_url     = setup_data_file.__download_url__
-        spy_modules       = setup_data_file.__py_modules__
-        splatforms        = setup_data_file.__platforms__
-        skeywords         = setup_data_file.__keywords__
-        sclassifiers      = setup_data_file.__classifiers__
-        sdescription      = setup_data_file.__description__
-        slong_description = setup_data_file.__long_description__
-        srpmdata          = setup_data_file.__rpm_data__
+        sname               = setup_data_file.__program_name__
+        sscripts            = setup_data_file.__scripts__
+        sdata_files         = setup_data_file.__data_files__
+        sversion            = setup_data_file.__version__
+        sauthor_email       = setup_data_file.__author_email__
+        sauthor             = setup_data_file.__author__
+        smaintainer_email   = setup_data_file.__maintainer_email__
+        smaintainer         = setup_data_file.__maintainer__
+        slicense            = setup_data_file.__license__
+        surl                = setup_data_file.__url__
+        sdownload_url       = setup_data_file.__download_url__
+        spy_modules         = setup_data_file.__py_modules__
+        splatforms          = setup_data_file.__platforms__
+        skeywords           = setup_data_file.__keywords__
+        sclassifiers        = setup_data_file.__classifiers__
+        sdescription        = setup_data_file.__description__
+        slong_description   = setup_data_file.__long_description__
+        srpmdata            = setup_data_file.__rpm_data__
     except Exception, why:
         print
         print 'ERR: Check your program "%s" defines. Some of the required \
@@ -426,7 +425,6 @@ entries are probably missing: [%s]' % (source_code, why)
             s.append(f1)
     for f in sscripts:
         s.append(f)
-    # sort -u
     s = sortuniq(s)
     m = open('MANIFEST', 'w')
     for f in s:
@@ -462,23 +460,24 @@ entries are probably missing: [%s]' % (source_code, why)
 
     # The real thing
     setup(
-        name             = sname,
-        scripts          = sscripts,
-        data_files       = sdata_files,
-        version          = sversion,
-        author_email     = sauthor_email,
-        author           = sauthor,
-        maintainer_email = smaintainer_email,
-        maintainer       = smaintainer,
-        license          = slicense,
-        url              = surl,
-        download_url     = sdownload_url,
-        py_modules       = spy_modules,
-        platforms        = splatforms,
-        keywords         = skeywords,
-        classifiers      = sclassifiers,
-        description      = sdescription,
-        long_description = slong_description
+        name                = sname,
+        scripts             = sscripts,
+        data_files          = sdata_files,
+        version             = sversion,
+        author_email        = sauthor_email,
+        author              = sauthor,
+        maintainer_email    = smaintainer_email,
+        maintainer          = smaintainer,
+        license             = slicense,
+        url                 = surl,
+        download_url        = sdownload_url,
+        py_modules          = spy_modules,
+        platforms           = splatforms,
+        keywords            = skeywords,
+        classifiers         = sclassifiers,
+        description         = sdescription,
+        long_description    = slong_description,
+        packages            = find_packages()
     )
 
     # Clean all, really
@@ -494,9 +493,13 @@ if __name__ == '__main__':
 
 '''
 # References:
+http://peak.telecommunity.com/DevCenter/EasyInstall
+http://peak.telecommunity.com/DevCenter/setuptools
 http://docs.python.org/distutils/
 http://docs.python.org/install/
 http://docs.python.org/distutils/setupscript.html
+http://docs.python.org/distutils/sourcedist.html
+http://docs.python.org/distutils/builtdist.html
 http://docs.python.org/distutils/apiref.html#module-distutils.core
 
 # Trove classifiers:
