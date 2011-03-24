@@ -9,8 +9,8 @@ __program_file__        = 'pytranslate.py'
 __program_name__        = '%s' % __program_file__.split('.py')[0]
 __scripts__             = []
 __data_files__          = []
-__version__             = '0.1.3'
-__date__                = '2011/03/14'
+__version__             = '0.1.4'
+__date__                = '2011/03/24'
 __author_name__         = 'Rogério Carvalho Schneider'
 __author_email__        = 'stockrt@gmail.com'
 __author__              = '%s <%s>' % (__author_name__, __author_email__)
@@ -124,18 +124,31 @@ def translate(text, sl='auto', tl='portuguese'):
     Translates text and returns resulting sentences from Google Translate.
 
     print pytranslate.translate('hello', sl='english', tl='portuguese')
+    print pytranslate.translate('olá', sl='portuguese', tl='english')
     print pytranslate.translate('hello', sl='auto', tl='portuguese')
+    print pytranslate.translate('olá', sl='auto', tl='english')
     print pytranslate.translate('hallo', sl='auto', tl='portuguese')
     print pytranslate.translate('hallo', sl='auto', tl='french')
-    print pytranslate.translate('Bonjour', sl='auto', tl='dutch')
+    print pytranslate.translate('bonjour', sl='auto', tl='dutch')
+    print pytranslate.translate('olá meu velho amigo', sl='auto', tl='english')
     '''
 
     urllib.FancyURLopener.version = 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008070400 SUSE/3.0.1-0.1 Firefox/3.0.1'
     f = urllib.FancyURLopener()
-    post_params = urllib.urlencode({'client':'t', 'text':text, 'sl':'%s' % (LANG_CODES[sl.lower()]), 'tl':'%s' % (LANG_CODES[tl.lower()])})
+    post_params = urllib.urlencode({
+        'client': 't',
+        'text': text,
+        'sl': '%s' % (LANG_CODES[sl.lower()]),
+        'tl': '%s' % (LANG_CODES[tl.lower()]),
+    })
     content = f.open('http://translate.google.com/translate_a/t', post_params).read()
     try:
-        return content[4:].split('"')[0]
+        ret = content[4:].split('"')[0]
+        ret_words = ret.split(' ')
+        if len(ret_words) == 2:
+            if ret_words[0] == ret_words[1]:
+                ret = ret_words[0]
+        return ret
     except:
         return text
 
